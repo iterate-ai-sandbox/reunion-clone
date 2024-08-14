@@ -4,11 +4,15 @@ import App from "./App.tsx";
 import "./index.css";
 import { store } from "./store.ts";
 import { Provider } from "react-redux";
+import AuthProvider from "react-auth-kit";
+import { authStore } from "./lib/exports.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      <AuthProvider store={authStore}>
+        <App />
+      </AuthProvider>
     </Provider>
   </StrictMode>
 );

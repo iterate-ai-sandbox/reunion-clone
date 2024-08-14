@@ -2,6 +2,14 @@ import { RiUser3Fill } from "react-icons/ri";
 import { PiShieldWarningFill } from "react-icons/pi";
 import { BsWindowStack } from "react-icons/bs";
 import { Sections } from "./schemas";
+import createStore from 'react-auth-kit/createStore';
+
+export const authStore = createStore({
+  authName:'_auth',
+  authType:'cookie',
+  cookieDomain: window.location.hostname,
+  cookieSecure: window.location.protocol === 'https:',
+});
 
 export const sections: Sections[] = [
     {
