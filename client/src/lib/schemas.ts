@@ -12,3 +12,9 @@ export interface SubSection {
   title: string;
   url: string | null;
 }
+
+export interface UserData {
+  fname: string;
+  lname: string;
+  email: string;
+}

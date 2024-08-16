@@ -11,8 +11,57 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "./ui/separator";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 function Login() {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      if (!tokenResponse || !tokenResponse.access_token) {
+        console.error("No token response received");
+        return;
+      }
+
+      try {
+        const userInfoResponse = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+          }
+        );
+
+        const userData = userInfoResponse.data;
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/oauth`,
+          {
+            userData: userData,
+            token: tokenResponse.access_token,
+          },
+          { withCredentials: true }
+        );
+
+        if (!response.data) {
+          throw new Error("Failed to save auth data to database");
+        }
+
+        await response.data;
+        location.reload();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
+  });
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin();
+    } catch (error) {
+      console.error("Google login error:", error);
+    }
+  };
+
   return (
     <div className="login flex items-center justify-center w-full h-screen bg-[#F3F4F6] opensans-regular">
       <Card className="flex flex-col items-center justify-center rounded-sm">
@@ -61,7 +110,11 @@ function Login() {
               </p>
             </div>
             <div className="btns my-5 w-full px-4">
-              <Button variant="outline" className="w-full">
+              <Button
+                onClick={handleGoogleLogin}
+                variant="outline"
+                className="w-full"
+              >
                 <FcGoogle fontSize={26} />
               </Button>
             </div>

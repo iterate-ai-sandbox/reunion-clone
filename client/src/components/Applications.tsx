@@ -1,3 +1,4 @@
+import { RootState } from "@/store";
 import Sidebar from "./ui/Sidebar";
 import {
   Table,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { FaAngleRight } from "react-icons/fa6";
 import { RiShareBoxLine } from "react-icons/ri";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 interface TableData {
@@ -19,6 +21,7 @@ interface TableData {
 
 function Applications() {
   const navigate = useNavigate();
+  const isToggle = useSelector((state: RootState) => state.toggle.value);
   const tableData: TableData[] = [
     {
       name: "Account Console",
@@ -40,9 +43,11 @@ function Applications() {
   return (
     <>
       <div className="applications flex items-start">
-        <div className="left">
-          <Sidebar />
-        </div>
+        {isToggle ? (
+          <div className="left absolute lg:relative z-[8]">
+            <Sidebar />
+          </div>
+        ) : null}
         <div className="right py-5 px-7 opensans-semibold w-full">
           <p className="text-2xl">Applications</p>
           <p className="text-lg my-10">Manage you application permissions.</p>

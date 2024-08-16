@@ -4,15 +4,14 @@ import App from "./App.tsx";
 import "./index.css";
 import { store } from "./store.ts";
 import { Provider } from "react-redux";
-import AuthProvider from "react-auth-kit";
-import { authStore } from "./lib/exports.tsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <AuthProvider store={authStore}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <App />
-      </AuthProvider>
+      </GoogleOAuthProvider>
     </Provider>
   </StrictMode>
 );

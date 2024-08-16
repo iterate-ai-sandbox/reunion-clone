@@ -11,8 +11,57 @@ import { Separator } from "./ui/separator";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { FaAnglesLeft } from "react-icons/fa6";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 function Register() {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      if (!tokenResponse || !tokenResponse.access_token) {
+        console.error("No token response received");
+        return;
+      }
+
+      try {
+        const userInfoResponse = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+          }
+        );
+
+        const userData = userInfoResponse.data;
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/oauth`,
+          {
+            userData: userData,
+            token: tokenResponse.access_token,
+          },
+          { withCredentials: true }
+        );
+
+        if (!response.data) {
+          throw new Error("Failed to save auth data to database");
+        }
+
+        await response.data;
+        window.location.reload();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
+  });
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin();
+    } catch (error) {
+      console.error("Google login error:", error);
+    }
+  };
+
   return (
     <div className="login flex flex-col items-center justify-center w-full h-screen bg-[#F3F4F6] opensans-regular">
       <Card className="flex flex-col items-center justify-center rounded-sm">
@@ -30,10 +79,10 @@ function Register() {
             <form className="w-[380px] m-4">
               <div className="grid w-full items-center gap-4">
                 <div className="flex flex-col space-y-1.5 w-full">
-                  <Input id="fname" placeholder="First Name" />
+                  <Input id="fname" type="text" placeholder="First Name" />
                 </div>
                 <div className="flex flex-col space-y-1.5 w-full">
-                  <Input id="lname" placeholder="Last Name" />
+                  <Input id="lname" type="text" placeholder="Last Name" />
                 </div>
                 <div className="flex flex-col space-y-1.5 w-full">
                   <Input id="name" type="email" placeholder="Email" />
@@ -63,7 +112,11 @@ function Register() {
               </p>
             </div>
             <div className="btns my-5 w-full px-4">
-              <Button variant="outline" className="w-full">
+              <Button
+                onClick={() => handleGoogleLogin()}
+                variant="outline"
+                className="w-full"
+              >
                 <FcGoogle fontSize={26} />
               </Button>
             </div>
