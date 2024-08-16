@@ -28,8 +28,8 @@ authRouter.post("/oauth", async (req: Request, res: Response) => {
       res
         .cookie("authToken", token, {
           httpOnly: false,
-          sameSite: "lax",
-          secure: false,
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+          secure: process.env.NODE_ENV === "production" ? true : false,
           maxAge: 24 * 60 * 60 * 1000,
         })
         .status(200)
@@ -38,8 +38,8 @@ authRouter.post("/oauth", async (req: Request, res: Response) => {
       return res
         .cookie("authToken", token, {
           httpOnly: false,
-          sameSite: "lax",
-          secure: false,
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+          secure: process.env.NODE_ENV === "production" ? true : false,
           maxAge: 24 * 60 * 60 * 1000,
         })
         .status(200)
