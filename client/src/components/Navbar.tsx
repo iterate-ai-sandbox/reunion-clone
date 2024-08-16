@@ -23,6 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { FiMenu } from "react-icons/fi";
+import mixpanel from "mixpanel-browser";
 
 function Navbar() {
   const [user, setUser] = useState<UserData | null>(null);
@@ -58,6 +59,7 @@ function Navbar() {
 
   const logout = async () => {
     try {
+      mixpanel.track("Logout clicked");
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/logout`,
         {
@@ -128,7 +130,10 @@ function Navbar() {
             >
               {!user?.email ? (
                 <Button
-                  onClick={() => navigate("/login")}
+                  onClick={() => {
+                    mixpanel.track("Login clicked");
+                    navigate("/login");
+                  }}
                   className="h-10 bg-[#026FFA] hover:bg-blue-300 transition-all hidden lg:block"
                 >
                   Log in
@@ -137,7 +142,10 @@ function Navbar() {
                 !ProtectedRoutes.includes(location.pathname) ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger>
-                    <div className="bg-gray-300 rounded-full p-3 lg:block hidden">
+                    <div
+                      onClick={() => mixpanel.track("User profile clicked")}
+                      className="bg-gray-300 rounded-full p-3 lg:block hidden"
+                    >
                       <FaUser
                         fontSize={22}
                         className="text-[#5A5A5A] cursor-pointer"
@@ -239,7 +247,10 @@ function Navbar() {
                     <div className="bottom mb-6 w-full">
                       {!user?.email ? (
                         <Button
-                          onClick={() => navigate("/login")}
+                          onClick={() => {
+                            mixpanel.track("Login clicked");
+                            navigate("/login");
+                          }}
                           variant="ghost"
                           className="text-blue-600 text-xl"
                         >

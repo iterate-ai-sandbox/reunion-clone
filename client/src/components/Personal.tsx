@@ -9,6 +9,7 @@ import axios from "axios";
 import { AiOutlineLoading } from "react-icons/ai";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import mixpanel from "mixpanel-browser";
 
 function Personal() {
   const isToggle = useSelector((state: RootState) => state.toggle.value);
@@ -31,6 +32,8 @@ function Personal() {
 
   const updateUser = async () => {
     try {
+      mixpanel.track("Update user clicked");
+
       if (!firstName || !lastName) {
         return;
       }

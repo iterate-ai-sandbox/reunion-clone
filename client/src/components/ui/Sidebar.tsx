@@ -1,3 +1,4 @@
+import mixpanel from "mixpanel-browser";
 import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +19,10 @@ function Sidebar() {
       <div className="sidebar h-screen bg-[#FAFAFA] opensans-semibold w-[300px] shadow-2xl leading-[2.8rem]">
         <div className="py-4">
           <p
-            onClick={() => navigate("/realms/reunion/account/personal-info")}
+            onClick={() => {
+              mixpanel.track("Personal info clicked");
+              navigate("/realms/reunion/account/personal-info");
+            }}
             className={`cursor-pointer px-4 ${personalClass}`}
           >
             Personal info
@@ -49,7 +53,10 @@ function Sidebar() {
             </div>
           ) : null}
           <p
-            onClick={() => navigate("/realms/reunion/account/applications")}
+            onClick={() => {
+              mixpanel.track("Applications clicked");
+              navigate("/realms/reunion/account/applications");
+            }}
             className={`cursor-pointer px-4 ${applicationsClass}`}
           >
             Applications
