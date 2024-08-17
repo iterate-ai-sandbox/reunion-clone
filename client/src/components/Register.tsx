@@ -45,8 +45,6 @@ function Register() {
         if (!response.data) {
           throw new Error("Failed to save auth data to database");
         }
-
-        await response.data;
         window.location.reload();
       } catch (error) {
         return error;

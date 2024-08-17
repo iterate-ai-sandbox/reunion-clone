@@ -45,9 +45,7 @@ function Login() {
         if (!response.data) {
           throw new Error("Failed to save auth data to database");
         }
-
-        await response.data;
-        location.reload();
+        window.location.reload();
       } catch (error) {
         return error;
       }
