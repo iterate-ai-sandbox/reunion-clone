@@ -2,49 +2,47 @@ import { Router, Request, Response } from "express";
 import sql from "../db";
 import { validateUser } from "../lib/validation";
 import axios from "axios";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const authRouter = Router();
 
 authRouter.post("/oauth", async (req: Request, res: Response) => {
   try {
     const { userData, token } = req.body;
 
-    if (!userData.email || !userData.given_name || !userData.family_name) {
+    if (
+      !userData.email ||
+      !userData.given_name ||
+      !userData.family_name ||
+      !token
+    ) {
       return res.status(400).json({ message: "Invalid data" });
     }
 
     // Check if user exists
-    const existingUsers = await sql`
-      SELECT * FROM users
-      WHERE email = ${userData.email}
-    `;
+    let user = await prisma.user.findUnique({
+      where: { email: userData.email },
+    });
 
-    if (existingUsers.length === 0) {
-      const newUser = await sql`
-        INSERT INTO users (email, fname, lname)
-        VALUES (${userData.email}, ${userData.given_name}, ${userData.family_name})
-        RETURNING id
-      `;
-      res
-        .cookie("authToken", token, {
-          httpOnly: false,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-          secure: process.env.NODE_ENV === "production" ? true : false,
-          maxAge: 24 * 60 * 60 * 1000,
-        })
-        .status(200)
-        .json({ user: newUser[0] });
-    } else {
-      return res
-        .cookie("authToken", token, {
-          httpOnly: false,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-          secure: process.env.NODE_ENV === "production" ? true : false,
-          maxAge: 24 * 60 * 60 * 1000,
-        })
-        .status(200)
-        .json({ user: existingUsers[0], message: "User exists" });
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email: userData.email,
+          fname: userData.given_name,
+          lname: userData.family_name,
+        },
+      });
     }
+    res
+      .cookie("authToken", token, {
+        httpOnly: false,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production" ? true : false,
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({ user, message: user ? "User exists" : "New user created" });
   } catch (error: any) {
     console.error("Error processing OAuth:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -82,18 +80,17 @@ authRouter.get("/user", async (req: Request, res: Response) => {
         .json({ success: false, message: "Invalid request" });
     }
 
-    const user = await sql`
-      SELECT * FROM users
-      WHERE email = ${email.toLocaleString()}
-    `;
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
-    if (user.length === 0) {
+    if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
-    return res.status(200).json({ success: true, user: user[0] });
+    return res.status(200).json({ success: true, user });
   } catch (error) {
     console.error("Error processing user request:", error);
     return res
@@ -111,28 +108,22 @@ authRouter.patch("/user", async (req: Request, res: Response) => {
 
     const { fname, lname, email } = req.body;
 
-    if (!fname || !lname) {
+    if (!fname || !lname || !email) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid request" });
     }
 
-    const user = await sql`
-      SELECT * FROM users
-      WHERE email = ${email.toLocaleString()}
-    `;
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: { fname, lname },
+    });
 
-    if (user.length === 0) {
+    if (!updatedUser) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found", user: updatedUser });
     }
-
-    await sql`
-      UPDATE users
-      SET fname = ${fname}, lname = ${lname}
-      WHERE id = ${user[0].id}
-    `;
 
     return res.status(200).json({ success: true, message: "User updated" });
   } catch (error) {
