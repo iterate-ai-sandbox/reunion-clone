@@ -49,7 +49,7 @@ function Login() {
         await response.data;
         location.reload();
       } catch (error) {
-        console.error("Error:", error);
+        return error;
       }
     },
   });

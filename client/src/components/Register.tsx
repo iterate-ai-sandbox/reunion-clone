@@ -49,7 +49,7 @@ function Register() {
         await response.data;
         window.location.reload();
       } catch (error) {
-        console.error("Error:", error);
+        return error;
       }
     },
   });

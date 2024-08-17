@@ -30,7 +30,7 @@ function App() {
           dispatch(getUser(response.data.user));
         }
       } catch (error) {
-        console.error("Failed to fetch user:", error);
+        return error;
       } finally {
         setIsLoading(false);
       }

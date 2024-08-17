@@ -71,7 +71,7 @@ function Navbar() {
         window.location.reload();
       }
     } catch (error) {
-      console.error("Failed to logout:", error);
+      return error;
     }
   };
 
