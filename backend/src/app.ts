@@ -1,9 +1,9 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import router from "./routes/auth";
+import { PrismaClient } from "@prisma/client";
 import cookieParser from "cookie-parser";
-import { PrismaClient } from '@prisma/client';
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import router from "./routes/auth";
 
 dotenv.config();
 
@@ -21,19 +21,21 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 app.use("/api", router);
 
 async function main() {
   try {
     await prisma.$connect();
-    console.log('Successfully connected to the database');
+    console.log("Successfully connected to the database");
 
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
   } catch (error) {
-    console.error('Failed to connect to the database:', error);
+    console.error("Failed to connect to the database:", error);
     process.exit(1);
   }
 }
