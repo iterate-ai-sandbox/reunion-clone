@@ -13,10 +13,10 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getUser } from "./slice/user";
 import mixpanel from "mixpanel-browser";
-
 mixpanel.init("96e5c3e3c2fd60563ca21b15487ea028", { debug: true });
 
 function App() {
+  console.log('lol')
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
