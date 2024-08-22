@@ -10,11 +10,12 @@ import Research from "./components/Research";
 import { useEffect, useState } from "react";
 import { UserData } from "./lib/schemas";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./slice/user";
+import { RootState } from "./store";
 
 function App() {
-  const [user, setUser] = useState<UserData | null>(null);
+  const user = useSelector((state: RootState) => state.user.data);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
 
@@ -26,7 +27,6 @@ function App() {
           { withCredentials: true }
         );
         if (response.data.success) {
-          setUser(response.data.user);
           dispatch(getUser(response.data.user));
         }
       } catch (error) {

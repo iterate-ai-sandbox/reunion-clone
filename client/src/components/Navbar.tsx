@@ -2,11 +2,10 @@ import { FaAngleDown } from "react-icons/fa6";
 import { Button } from "./ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa6";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "@/slice/toggleSlice";
 import { FaUser } from "react-icons/fa6";
-import { useEffect, useState } from "react";
-import { UserData } from "@/lib/schemas";
+import { useState } from "react";
 import axios from "axios";
 import {
   DropdownMenu,
@@ -23,9 +22,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { FiMenu } from "react-icons/fi";
+import { RootState } from "@/store";
+import { getUser } from "@/slice/user";
 
 function Navbar() {
-  const [user, setUser] = useState<UserData | null>(null);
+  const user = useSelector((state: RootState) => state.user.data);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLandingPage = location.pathname === "/";
@@ -41,21 +42,6 @@ function Navbar() {
     "/realms/reunion/account",
   ];
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/user`,
-          { withCredentials: true }
-        );
-        setUser(response.data.user);
-      } catch (error) {
-        return error;
-      }
-    };
-    fetchUser();
-  }, []);
-
   const logout = async () => {
     try {
       const response = await axios.get(
@@ -66,9 +52,7 @@ function Navbar() {
       );
 
       if (response.data.success) {
-        setUser(null);
-        navigate("/");
-        window.location.reload();
+        dispatch(getUser(null));
       }
     } catch (error) {
       return error;

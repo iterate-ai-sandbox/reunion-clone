@@ -13,8 +13,12 @@ import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { getUser } from "@/slice/user";
+import { useDispatch } from "react-redux";
 
 function Login() {
+  const dispatch = useDispatch();
+
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       if (!tokenResponse || !tokenResponse.access_token) {
@@ -44,8 +48,9 @@ function Login() {
 
         if (!response.data) {
           throw new Error("Failed to save auth data to database");
+        } else {
+          dispatch(getUser(response.data.user));
         }
-        window.location.reload();
       } catch (error) {
         return error;
       }
@@ -54,7 +59,7 @@ function Login() {
 
   const handleGoogleLogin = async () => {
     try {
-      await googleLogin();
+      googleLogin();
     } catch (error) {
       console.error("Google login error:", error);
     }
