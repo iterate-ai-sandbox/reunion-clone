@@ -10,15 +10,16 @@ import Research from "./components/Research";
 import { useEffect, useState } from "react";
 import { UserData } from "./lib/schemas";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./slice/user";
 import mixpanel from "mixpanel-browser";
+import { RootState } from "./store";
 
 mixpanel.init("96e5c3e3c2fd60563ca21b15487ea028", { debug: true });
 
 function App() {
-  const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const user = useSelector((state: RootState) => state.user.data);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,7 +30,6 @@ function App() {
           { withCredentials: true }
         );
         if (response.data.success) {
-          setUser(response.data.user);
           dispatch(getUser(response.data.user));
         }
       } catch (error) {

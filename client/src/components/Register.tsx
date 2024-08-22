@@ -13,8 +13,12 @@ import { Link } from "react-router-dom";
 import { FaAnglesLeft } from "react-icons/fa6";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { getUser } from "@/slice/user";
+import { useDispatch } from "react-redux";
 
 function Register() {
+  const dispatch = useDispatch();
+
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       if (!tokenResponse || !tokenResponse.access_token) {
@@ -44,10 +48,9 @@ function Register() {
 
         if (!response.data) {
           throw new Error("Failed to save auth data to database");
+        } else {
+          dispatch(getUser(response.data.user));
         }
-
-        await response.data;
-        window.location.reload();
       } catch (error) {
         return error;
       }
