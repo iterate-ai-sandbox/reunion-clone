@@ -37,8 +37,8 @@ authRouter.post("/oauth", async (req: Request, res: Response) => {
     res
       .cookie("authToken", token, {
         httpOnly: false,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        secure: process.env.NODE_ENV === "production" ? true : false,
+        sameSite: process.env.BACKEND_EV === "production" ? "none" : "lax",
+        secure: process.env.BACKEND_EV === "production" ? true : false,
         maxAge: 24 * 60 * 60 * 1000,
       })
       .status(200)
