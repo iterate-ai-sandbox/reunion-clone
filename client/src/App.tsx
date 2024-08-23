@@ -13,8 +13,11 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./slice/user";
 import { RootState } from "./store";
+import mixpanel from "mixpanel-browser";
 
 function App() {
+  mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN);
+
   const user = useSelector((state: RootState) => state.user.data);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch();

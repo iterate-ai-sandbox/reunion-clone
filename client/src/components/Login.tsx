@@ -15,6 +15,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { getUser } from "@/slice/user";
 import { useDispatch } from "react-redux";
+import mixpanel from "mixpanel-browser";
 
 function Login() {
   const dispatch = useDispatch();
@@ -49,6 +50,9 @@ function Login() {
         if (!response.data) {
           throw new Error("Failed to save auth data to database");
         } else {
+          mixpanel.track("signin_completed", {
+            signin_method: "Google",
+          });
           dispatch(getUser(response.data.user));
         }
       } catch (error) {
@@ -59,6 +63,7 @@ function Login() {
 
   const handleGoogleLogin = async () => {
     try {
+      mixpanel.track("signin_initiated");
       googleLogin();
     } catch (error) {
       console.error("Google login error:", error);
@@ -99,7 +104,14 @@ function Login() {
                   Remember me
                 </label>
               </div>
-              <p className="text-blue-500 text-sm">Forgot password?</p>
+              <p
+                onClick={() => {
+                  mixpanel.track("forgot_password_clicked");
+                }}
+                className="text-blue-500 text-sm cursor-pointer hover:underline"
+              >
+                Forgot password?
+              </p>
             </div>
             <div className="btns w-full my-6 px-4">
               <Button className="w-full bg-[#2563EB] hover:bg-blue-700">
