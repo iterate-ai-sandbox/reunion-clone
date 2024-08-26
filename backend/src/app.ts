@@ -17,6 +17,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:4173",
       "https://iterate-ai-sandbox-reunion-clone-test.iterate-ai.com",
+      "https://iterate-ai-sandbox-reunion-clone-main.iterate-ai.com/",
     ],
     methods: ["POST", "GET", "PATCH", "DELETE"],
     credentials: true,
