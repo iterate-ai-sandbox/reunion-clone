@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { FaAngleRight } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import mixpanel from 'mixpanel-browser';
+import { FaAngleRight } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -24,7 +25,10 @@ function Sidebar() {
             Personal info
           </p>
           <div
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen);
+              mixpanel.track("account security option clicked");
+            }}
             className="flex items-center justify-between cursor-pointer px-4 hover:bg-gray-200"
           >
             <p>Account security</p>

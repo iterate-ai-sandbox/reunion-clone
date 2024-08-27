@@ -1,10 +1,14 @@
-import { FaAngleDown, FaBars, FaUser } from "react-icons/fa6";
-import { Button } from "./ui/button";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleMenu } from "@/slice/toggleSlice";
-import { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import { FaAngleDown, FaBars, FaUser } from 'react-icons/fa6';
+import { Button } from './ui/button';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleMenu } from '@/slice/toggleSlice';
+import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
+import { FiMenu } from 'react-icons/fi';
+import { RootState } from '@/store';
+import { getUser } from '@/slice/user';
+import mixpanel from 'mixpanel-browser';
 import {
   Sheet,
   SheetContent,
@@ -13,10 +17,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FiMenu } from "react-icons/fi";
-import { RootState } from "@/store";
-import { getUser } from "@/slice/user";
-import mixpanel from "mixpanel-browser";
 
 function Navbar() {
   const user = useSelector((state: RootState) => state.user.data);
@@ -67,7 +67,7 @@ function Navbar() {
         `${import.meta.env.VITE_API_URL}/api/logout`,
         {
           withCredentials: true,
-        }
+        },
       );
 
       if (response.data.success) {
@@ -147,30 +147,8 @@ function Navbar() {
               </div>
               {isDropdownOpen && (
                 <div className="absolute right-0 border top-full mt-2 w-48 bg-white rounded-md shadow-lg p-2 z-10">
-                  <button
-                    onClick={() => {
-                      navigate("/realms/reunion/account/personal-info");
-                      setIsDropdownOpen(false);
-                      mixpanel.track("profile_ham_menu_item_selected", {
-                        selected_item_name: "My Account",
-                      });
-                    }}
-                    className="block px-4 py-2 text-sm text-gray-700 transition-all rounded hover:bg-[#026FFA] hover:text-white w-full text-left"
-                  >
-                    My Account
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate("/realms/reunion/account/applications");
-                      setIsDropdownOpen(false);
-                      mixpanel.track("profile_ham_menu_item_selected", {
-                        selected_item_name: "My Apps",
-                      });
-                    }}
-                    className="block px-4 py-2 text-sm text-gray-700 transition-all rounded hover:bg-[#026FFA] hover:text-white w-full text-left"
-                  >
-                    My Apps
-                  </button>
+                  <div onClick={() => mixpanel.track('profile menu - my account clicked')}>My Account</div>
+                  <button onClick={() => { mixpanel.track('profile menu - my apps clicked'); navigate("/realms/reunion/account/applications"); setIsDropdownOpen(false); }}>
                   <button
                     onClick={() => {
                       logout();
