@@ -1,10 +1,14 @@
-import { FaAngleDown, FaBars, FaUser } from "react-icons/fa6";
-import { Button } from "./ui/button";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleMenu } from "@/slice/toggleSlice";
-import { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import { FaAngleDown, FaBars, FaUser } from 'react-icons/fa6';
+import { Button } from './ui/button';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleMenu } from '@/slice/toggleSlice';
+import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
+import { FiMenu } from 'react-icons/fi';
+import { RootState } from '@/store';
+import { getUser } from '@/slice/user';
+import mixpanel from 'mixpanel-browser';
 import {
   Sheet,
   SheetContent,
@@ -13,10 +17,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FiMenu } from "react-icons/fi";
-import { RootState } from "@/store";
-import { getUser } from "@/slice/user";
-import mixpanel from "mixpanel-browser";
 
 function Navbar() {
   const user = useSelector((state: RootState) => state.user.data);
@@ -67,7 +67,7 @@ function Navbar() {
         `${import.meta.env.VITE_API_URL}/api/logout`,
         {
           withCredentials: true,
-        }
+        },
       );
 
       if (response.data.success) {
@@ -151,7 +151,7 @@ function Navbar() {
                     onClick={() => {
                       navigate("/realms/reunion/account/personal-info");
                       setIsDropdownOpen(false);
-                      mixpanel.track("profile_ham_menu_item_selected", {
+                      <button onClick={() => { navigate("/realms/reunion/account/applications"); setIsDropdownOpen(false); mixpanel.track("profile_ham_menu_item_selected", { selected_item_name: "My Apps", }); mixpanel.track("my apps option clicked"); }}>
                         selected_item_name: "My Account",
                       });
                     }}
