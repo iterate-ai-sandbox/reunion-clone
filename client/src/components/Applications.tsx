@@ -1,5 +1,11 @@
-import { RootState } from "@/store";
-import Sidebar from "./ui/Sidebar";
+import { RootState } from '@/store';
+import Sidebar from './ui/Sidebar';
+import { FaAngleRight } from 'react-icons/fa6';
+import { RiShareBoxLine } from 'react-icons/ri';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import mixpanel from 'mixpanel-browser';
+import { useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -8,10 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FaAngleRight } from "react-icons/fa6";
-import { RiShareBoxLine } from "react-icons/ri";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 interface TableData {
   name: string;
@@ -20,6 +22,9 @@ interface TableData {
 }
 
 function Applications() {
+  useEffect(() => {
+    mixpanel.track("applications page opened");
+  }, []);
   const navigate = useNavigate();
   const isToggle = useSelector((state: RootState) => state.toggle.value);
   const tableData: TableData[] = [
@@ -70,7 +75,13 @@ function Applications() {
                       <FaAngleRight className="text-gray-400" fontSize={16} />
                     </TableCell>
                     <div
-                      onClick={() => navigate(data.path)}
+                      onClick={() => {
+                        mixpanel.track("application selected", {
+                          "application name": data.name,
+                          "application status": data.status,
+                        });
+                        navigate(data.path);
+                      }}
                       className="flex items-center gap-1 h-20 cursor-pointer group w-fit"
                     >
                       <TableCell className="font-medium flex items-center gap-2 text-[#026FFA] group-hover:text-blue-800">

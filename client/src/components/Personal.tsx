@@ -1,14 +1,15 @@
-import Sidebar from "./ui/Sidebar";
+import Sidebar from './ui/Sidebar';
+import { useSelector } from 'react-redux';
+import { Label } from './ui/label';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import mixpanel from 'mixpanel-browser';
+import { AiOutlineLoading } from 'react-icons/ai';
+import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 import type { RootState } from "../store";
-import { useSelector } from "react-redux";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { AiOutlineLoading } from "react-icons/ai";
-import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
 
 function Personal() {
   const isToggle = useSelector((state: RootState) => state.toggle.value);
@@ -21,6 +22,7 @@ function Personal() {
   useEffect(() => {
     setFirstName(user?.fname || "");
     setLastName(user?.lname || "");
+    mixpanel.track("personal info page opened");
   }, [user]);
 
   const resetInputs = () => {
@@ -44,7 +46,7 @@ function Personal() {
           lname: lastName,
           email: user?.email,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (response.data.success) {
