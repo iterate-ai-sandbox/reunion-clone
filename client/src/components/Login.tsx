@@ -1,4 +1,14 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from './ui/separator';
+import { FcGoogle } from 'react-icons/fc';
+import { Link } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
+import { getUser } from '@/slice/user';
+import { useDispatch } from 'react-redux';
+import mixpanel from 'mixpanel-browser';
 import {
   Card,
   CardContent,
@@ -6,16 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "./ui/separator";
-import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
-import { getUser } from "@/slice/user";
-import { useDispatch } from "react-redux";
-import mixpanel from "mixpanel-browser";
 
 function Login() {
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ function Login() {
             headers: {
               Authorization: `Bearer ${tokenResponse.access_token}`,
             },
-          }
+          },
         );
 
         const userData = userInfoResponse.data;
@@ -44,7 +44,7 @@ function Login() {
             userData: userData,
             token: tokenResponse.access_token,
           },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         if (!response.data) {
@@ -114,7 +114,12 @@ function Login() {
               </p>
             </div>
             <div className="btns w-full my-6 px-4">
-              <Button className="w-full bg-[#2563EB] hover:bg-blue-700">
+              <Button
+                className="w-full bg-[#2563EB] hover:bg-blue-700"
+                onClick={() => {
+                  mixpanel.track("signin button clicked");
+                }}
+              >
                 Sign in
               </Button>
             </div>

@@ -1,4 +1,10 @@
+import { useEffect } from 'react';
+import mixpanel from 'mixpanel-browser';
+
 function LandingPage() {
+  useEffect(() => {
+    mixpanel.track("landing page opened");
+  }, []);
   return (
     <>
       <div className="landing-page flex flex-col items-center justify-center">
